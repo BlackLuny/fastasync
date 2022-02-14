@@ -10,7 +10,7 @@ use futures::StreamExt;
 #[tokio::main]
 async fn main() {
     let all_client = Arc::new(Mutex::new(Vec::new()));
-    for i in 0..10 {
+    for i in 0..4 {
         iter(0..100)
             .for_each_concurrent(0, |_| {
                 let all_client_clone = all_client.clone();
@@ -31,7 +31,7 @@ async fn main() {
             .await
             .first()
             .unwrap()
-            .spawn_task(1, TaskType::Spread, Some(500))
+            .spawn_task(1, TaskType::Spread, Some(199))
             .await
             .unwrap();
         println!("time used: {}", now.elapsed().as_millis());

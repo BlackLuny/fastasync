@@ -9,9 +9,9 @@ use futures::StreamExt;
 
 #[tokio::main]
 async fn main() {
-    let all_client = Arc::new(Mutex::new(Vec::new()));
-    for i in 0..1 {
-        iter(0..20)
+    {let all_client = Arc::new(Mutex::new(Vec::new()));
+    for i in 0..40 {
+        iter(0..50)
             .for_each_concurrent(0, |_| {
                 let all_client_clone = all_client.clone();
                 async move {
@@ -23,31 +23,23 @@ async fn main() {
             })
             .await;
     }
-    tokio::time::sleep(Duration::from_secs(20)).await;
+    tokio::time::sleep(Duration::from_secs(10)).await;
     println!("start");
     if std::env::args().len()>1 {
         let now = Instant::now();
-        all_client
-            .lock()
-            .await
-            .first()
-            .unwrap()
-            .spawn_task(1, TaskType::Spread, Some(19))
-            .await
-            .unwrap();
-            tokio::time::sleep(Duration::from_secs(5)).await;
-        
-        let mut a = all_client
-            .lock()
-            .await;
+        // all_client
+        //     .lock()
+        //     .await
+        //     .first()
+        //     .unwrap()
+        //     .spawn_task(1, TaskType::Spread, Some(19))
+        //     .await
+        //     .unwrap();
+        //     tokio::time::sleep(Duration::from_secs(5)).await;
 
-            for x in a.drain(..) {
-                x.zk_mng.debug_info().await;
-                tokio::time::sleep(Duration::from_secs(2)).await;
-            }
             
         println!("time used: {}", now.elapsed().as_millis());
     }
-    drop(all_client);
+}
     tokio::time::sleep(Duration::from_secs(500)).await;
 }

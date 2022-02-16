@@ -9,8 +9,8 @@ use futures::StreamExt;
 
 #[tokio::main]
 async fn main() {
-    {let all_client = Arc::new(Mutex::new(Vec::new()));
-    for i in 0..40 {
+    let all_client = Arc::new(Mutex::new(Vec::new()));
+    for i in 0..1 {
         iter(0..50)
             .for_each_concurrent(0, |_| {
                 let all_client_clone = all_client.clone();
@@ -35,11 +35,24 @@ async fn main() {
         //     .spawn_task(1, TaskType::Spread, Some(19))
         //     .await
         //     .unwrap();
-        //     tokio::time::sleep(Duration::from_secs(5)).await;
-
+        tokio::time::sleep(Duration::from_secs(5)).await;
+        all_client
+            .lock()
+            .await
+            .first()
+            .unwrap()
+            .debug_info()
+            .await;
             
         println!("time used: {}", now.elapsed().as_millis());
     }
-}
+    // for x in all_client.lock().await.iter() {
+    //     x.close();
+    // }
+    // tokio::time::sleep(Duration::from_secs(5)).await;
+    // for x in all_client.lock().await.iter() {
+    //     x.zk_mng.debug_info();
+    // }
+    drop(all_client);
     tokio::time::sleep(Duration::from_secs(500)).await;
 }

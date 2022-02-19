@@ -11,3 +11,4 @@ log = "0"
 env_logger = "0"
 tokio = {version = "1", features = ["full"]}
 futures = "0"
+leak-detect-allocator = {git = "https://github.com/lynnux/leak-detect-allocator.git"}

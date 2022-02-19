@@ -11,7 +11,7 @@ use futures::StreamExt;
 async fn main() {
     let all_client = Arc::new(Mutex::new(Vec::new()));
     for i in 0..1 {
-        iter(0..50)
+        iter(0..2)
             .for_each_concurrent(0, |_| {
                 let all_client_clone = all_client.clone();
                 async move {
@@ -23,26 +23,26 @@ async fn main() {
             })
             .await;
     }
-    tokio::time::sleep(Duration::from_secs(10)).await;
+    //tokio::time::sleep(Duration::from_secs(10)).await;
     println!("start");
     if std::env::args().len()>1 {
         let now = Instant::now();
-        // all_client
-        //     .lock()
-        //     .await
-        //     .first()
-        //     .unwrap()
-        //     .spawn_task(1, TaskType::Spread, Some(19))
-        //     .await
-        //     .unwrap();
-        tokio::time::sleep(Duration::from_secs(5)).await;
         all_client
             .lock()
             .await
             .first()
             .unwrap()
-            .debug_info()
-            .await;
+            .spawn_task(1, TaskType::Spread, Some(1))
+            .await
+            .unwrap();
+        tokio::time::sleep(Duration::from_secs(5)).await;
+        // all_client
+        //     .lock()
+        //     .await
+        //     .first()
+        //     .unwrap()
+        //     .debug_info()
+        //     .await;
             
         println!("time used: {}", now.elapsed().as_millis());
     }
